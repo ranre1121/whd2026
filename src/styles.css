@@ -1,4 +1,19 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/jetbrains-mono';
+
+/* Kazakh Cyrillic characters missing from fontsource's cyrillic-ext subset.
+   Carried over from hacknu-2026 along with the woff2 itself — without it
+   Әә Ғғ Ққ Ңң Ұұ Һһ fall back to a system font mid-word. */
+@font-face {
+  font-family: 'JetBrains Mono Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url('/fonts/jetbrains-mono-kazakh-wght-normal.woff2') format('woff2-variations');
+  unicode-range:
+    U+0492-0493, U+049A-049B, U+04A2-04A3, U+04AE-04AF, U+04B0-04B1, U+04BA-04BB, U+04D8-04D9,
+    U+04E8-04E9;
+}
 
 /* ===== Women's Hack Day Theme ===== */
 
@@ -24,7 +39,7 @@
 }
 
 @theme inline {
-  --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'JetBrains Mono Variable', monospace;
 
   --color-whd-pink: var(--whd-pink);
   --color-whd-pink-deep: var(--whd-pink-deep);
@@ -54,7 +69,7 @@ body {
   margin: 0;
   min-height: 100vh;
   overflow-x: hidden;
-  font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'JetBrains Mono Variable', monospace;
   background-color: var(--whd-dark);
   color: var(--whd-text);
   -webkit-font-smoothing: antialiased;

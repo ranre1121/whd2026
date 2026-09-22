@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, LinkButton } from '@/components/ui/button';
+import { Link } from '@tanstack/react-router';
+import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { REGISTRATION_URL } from '@/lib/event';
+import { buttonVariants } from '@/components/ui/button-variants';
+import { cn } from '@/lib/utils';
+import type { Session } from '@/lib/types';
 
 const NAV_LINKS = [
   { href: '#about', labelKey: 'navbar.about' },
@@ -11,9 +14,12 @@ const NAV_LINKS = [
   { href: '#faq', labelKey: 'navbar.faq' },
 ] as const;
 
-export default function Navbar() {
+export default function Navbar({ session }: { session: Session }) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const isLoggedIn = !!session?.user;
+  const ctaTo = isLoggedIn ? '/dashboard' : '/login';
+  const ctaLabel = isLoggedIn ? t('navbar.dashboard') : t('navbar.register');
 
   return (
     <header className="bg-whd-pink/95 fixed inset-x-0 top-0 z-50 w-full shadow-lg backdrop-blur-md">
@@ -24,7 +30,7 @@ export default function Navbar() {
         </a>
 
         {/* Desktop navigation */}
-        <nav className="hidden items-center gap-x-6 text-base text-white md:flex lg:gap-x-8 lg:text-lg">
+        <nav className="hidden items-center gap-x-6 text-base text-white uppercase md:flex lg:gap-x-8">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
@@ -35,15 +41,9 @@ export default function Navbar() {
             </a>
           ))}
 
-          <LinkButton
-            href={REGISTRATION_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="solid"
-            size="sm"
-          >
-            {t('navbar.register')}
-          </LinkButton>
+          <Link to={ctaTo} className={cn(buttonVariants({ variant: 'solid', size: 'sm' }))}>
+            {ctaLabel}
+          </Link>
 
           <LanguageSwitcher />
         </nav>
@@ -99,16 +99,13 @@ export default function Navbar() {
                 <LanguageSwitcher size="md" onLanguageChange={() => setIsOpen(false)} />
               </div>
 
-              <LinkButton
-                href={REGISTRATION_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to={ctaTo}
                 onClick={() => setIsOpen(false)}
-                variant="solid"
-                className="w-full"
+                className={cn(buttonVariants({ variant: 'solid' }), 'w-full')}
               >
-                {t('navbar.register')}
-              </LinkButton>
+                {ctaLabel}
+              </Link>
             </div>
           </div>
         </div>

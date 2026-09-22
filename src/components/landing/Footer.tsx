@@ -1,8 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { LinkButton } from '@/components/ui/button';
+import { Link } from '@tanstack/react-router';
+import { buttonVariants } from '@/components/ui/button-variants';
+import { cn } from '@/lib/utils';
+import type { Session } from '@/lib/types';
 import { Separator } from '@/components/ui/separator';
 import DecryptedText from '@/components/landing/DecryptedText';
-import { REGISTRATION_URL, SOCIAL_LINKS } from '@/lib/event';
+import { SOCIAL_LINKS } from '@/lib/event';
 
 const SOCIALS = [
   { href: SOCIAL_LINKS.instagram, labelKey: 'footer.instagram' },
@@ -11,8 +14,9 @@ const SOCIALS = [
   { href: SOCIAL_LINKS.email, labelKey: 'footer.email' },
 ] as const;
 
-export default function Footer() {
+export default function Footer({ session }: { session: Session }) {
   const { t } = useTranslation();
+  const isLoggedIn = !!session?.user;
 
   return (
     <footer id="registration" className="border-whd-border bg-whd-dark border-t">
@@ -29,15 +33,12 @@ export default function Footer() {
               encryptedClassName="text-whd-pink/50"
             />
           </p>
-          <LinkButton
-            href={REGISTRATION_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="primary"
-            size="lg"
+          <Link
+            to={isLoggedIn ? '/dashboard' : '/login'}
+            className={cn(buttonVariants({ variant: 'primary', size: 'lg' }))}
           >
-            {t('footer.register')}
-          </LinkButton>
+            {isLoggedIn ? t('footer.dashboard') : t('footer.register')}
+          </Link>
         </div>
       </div>
 

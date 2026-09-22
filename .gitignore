@@ -5,3 +5,8 @@ dist
 .env
 .env.*
 !.env.example
+
+# Cloudflare
+.wrangler
+.dev.vars
+worker-configuration.d.ts

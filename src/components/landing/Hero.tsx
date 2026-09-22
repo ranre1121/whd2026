@@ -1,12 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
-import { LinkButton } from '@/components/ui/button';
+import { Link } from '@tanstack/react-router';
+import { buttonVariants } from '@/components/ui/button-variants';
+import { cn } from '@/lib/utils';
+import type { Session } from '@/lib/types';
 import { HexagonBackground } from '@/components/landing/HexagonBackground';
 import Countdown from '@/components/landing/Countdown';
-import { REGISTRATION_URL } from '@/lib/event';
 
-export default function Hero() {
+export default function Hero({ session }: { session: Session }) {
   const { t } = useTranslation();
+  const isLoggedIn = !!session?.user;
 
   return (
     <section
@@ -65,16 +68,12 @@ export default function Hero() {
 
           <Countdown />
 
-          <LinkButton
-            href={REGISTRATION_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="primary"
-            size="lg"
-            className="mt-2"
+          <Link
+            to={isLoggedIn ? '/dashboard' : '/login'}
+            className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'mt-2')}
           >
-            {t('hero.register')}
-          </LinkButton>
+            {isLoggedIn ? t('hero.dashboard') : t('hero.register')}
+          </Link>
         </motion.div>
       </div>
     </section>

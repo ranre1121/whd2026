@@ -68,9 +68,25 @@ export default function InfoCards() {
                     rel="noopener noreferrer"
                     variant="link"
                     size="none"
-                    className="mt-4 text-sm font-semibold tracking-wider uppercase"
+                    className="group/action mt-4 gap-1.5 text-sm font-semibold tracking-wider uppercase"
                   >
                     {row.action.text}
+                    <svg
+                      width="14"
+                      height="10"
+                      viewBox="0 0 14 10"
+                      fill="none"
+                      aria-hidden="true"
+                      className="transition-transform duration-200 group-hover/action:translate-x-1"
+                    >
+                      <path
+                        d="M1 5h11M8.5 1.5 12 5l-3.5 3.5"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </LinkButton>
                 )}
               </div>

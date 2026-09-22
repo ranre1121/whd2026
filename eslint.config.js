@@ -24,5 +24,11 @@ export default tseslint.config(
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
+  {
+    // File-based routes must export `Route` next to their component — that is
+    // TanStack Router's contract, not a Fast Refresh mistake.
+    files: ['src/routes/**/*.tsx'],
+    rules: { 'react-refresh/only-export-components': 'off' },
+  },
   prettier,
 );

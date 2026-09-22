@@ -40,8 +40,11 @@ export default function Countdown() {
   const { t, i18n } = useTranslation();
   const target = REGISTRATION_DEADLINE.getTime();
 
-  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(() => getTimeLeft(target));
-  const [hasElapsed, setHasElapsed] = useState(() => getTimeLeft(target) === null);
+  // Seeded as null rather than from Date.now(): the server and the client would
+  // compute different values and React would flag a hydration mismatch. The
+  // first tick fills it in immediately after mount.
+  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
+  const [hasElapsed, setHasElapsed] = useState(false);
 
   useEffect(() => {
     const tick = () => {
@@ -76,11 +79,7 @@ export default function Countdown() {
   // goes with it — "Registration closes in / Registration is closed" would read
   // as a contradiction.
   if (hasElapsed) {
-    return (
-      <p className="rounded-full border border-white/20 bg-white/5 px-6 py-3 text-base font-medium text-white/70 md:text-lg">
-        {t('countdown.ended')}
-      </p>
-    );
+    return <></>;
   }
 
   const units = timeLeft

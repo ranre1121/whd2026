@@ -22,24 +22,30 @@ const resources = {
   kk: { translation: kk },
 };
 
-i18n
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    resources,
-    fallbackLng: 'en',
-    supportedLngs: [...supportedLngs],
+const isBrowser = typeof window !== 'undefined';
+
+const instance = i18n.use(initReactI18next);
+// The detector touches document/navigator, so it is browser-only. On the
+// server the locale comes from the `locale` cookie, applied in __root.tsx.
+if (isBrowser) {
+  instance.use(LanguageDetector);
+}
+
+instance.init({
+  lng: isBrowser ? undefined : 'en',
+  resources,
+  fallbackLng: 'en',
+  supportedLngs: [...supportedLngs],
+  ...(isBrowser && {
     detection: {
-      order: ['localStorage', 'navigator'],
-      lookupLocalStorage: 'language',
-      caches: ['localStorage'],
+      order: ['cookie', 'navigator'],
+      lookupCookie: 'locale',
+      caches: ['cookie'],
+      cookieOptions: { path: '/', maxAge: 365 * 24 * 60 * 60 },
     },
-    interpolation: {
-      escapeValue: false,
-    },
-    react: {
-      useSuspense: false,
-    },
-  });
+  }),
+  interpolation: { escapeValue: false },
+  react: { useSuspense: false },
+});
 
 export default i18n;
