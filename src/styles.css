@@ -1,0 +1,153 @@
+@import 'tailwindcss';
+
+/* ===== Women's Hack Day Theme ===== */
+
+:root {
+  /* WHD brand colors */
+  --whd-pink: #bb046c;
+  --whd-pink-deep: #a00359;
+  --whd-pink-soft: #da649c;
+  --whd-pink-bright: #ff9dd5;
+
+  /* Surfaces */
+  --whd-dark: #000000;
+  --whd-surface: #18181b;
+  --whd-surface-raised: #27272a;
+  --whd-border: #27272a;
+
+  /* Text */
+  --whd-text: #ffffff;
+  --whd-text-muted: #a1a1aa;
+  --whd-text-dim: #6c6c6c;
+
+  --whd-radius: 1rem;
+}
+
+@theme inline {
+  --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+
+  --color-whd-pink: var(--whd-pink);
+  --color-whd-pink-deep: var(--whd-pink-deep);
+  --color-whd-pink-soft: var(--whd-pink-soft);
+  --color-whd-pink-bright: var(--whd-pink-bright);
+
+  --color-whd-dark: var(--whd-dark);
+  --color-whd-surface: var(--whd-surface);
+  --color-whd-surface-raised: var(--whd-surface-raised);
+  --color-whd-border: var(--whd-border);
+
+  --color-whd-text: var(--whd-text);
+  --color-whd-text-muted: var(--whd-text-muted);
+  --color-whd-text-dim: var(--whd-text-dim);
+}
+
+/* ===== Base Styles ===== */
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  /* Offset anchor scrolling so sections clear the fixed header */
+  scroll-padding-top: 6rem;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  background-color: var(--whd-dark);
+  color: var(--whd-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ===== Animations ===== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* ===== Utility Classes ===== */
+
+/* Soft pink halo used behind illustrations and cards */
+.whd-glow {
+  box-shadow: 0px 5px 80px 0px rgba(187, 4, 108, 0.4);
+}
+
+.gradient-text-primary {
+  background: linear-gradient(135deg, #66ce3c, #39c6f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-secondary {
+  background: linear-gradient(135deg, #f687c1, #f03b1b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-pink {
+  background: linear-gradient(135deg, var(--whd-pink-bright), var(--whd-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Section eyebrow label — the small centred kicker above every section title */
+.section-kicker {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--whd-pink-soft);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--whd-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--whd-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--whd-pink);
+}
+
+::selection {
+  background: rgba(187, 4, 108, 0.45);
+  color: #ffffff;
+}

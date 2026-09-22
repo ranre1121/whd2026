@@ -1,0 +1,163 @@
+{
+  "common": {
+    "switchLanguage": "Switch language"
+  },
+  "navbar": {
+    "about": "About",
+    "schedule": "Schedule",
+    "partners": "Partners",
+    "faq": "FAQ",
+    "register": "Registration",
+    "toggleMenu": "Toggle menu"
+  },
+  "hero": {
+    "title": "Women’s Hack Day",
+    "tagline": "A three-round team competition for girls who dream of conquering the world of IT.",
+    "countdownLabel": "Registration closes in",
+    "register": "Register",
+    "imageAlt": "Women’s Hack Day illustration"
+  },
+  "countdown": {
+    "days": "Days",
+    "days_one": "Day",
+    "days_few": "Days",
+    "hours": "Hours",
+    "hours_one": "Hour",
+    "hours_few": "Hours",
+    "minutes": "Min",
+    "seconds": "Sec",
+    "ended": "Registration is closed"
+  },
+  "infoCards": {
+    "when": "When?",
+    "whenAnswer": "October 25",
+    "whenDetail": "2025 — registration is open October 8–22",
+    "where": "Where?",
+    "whereAnswer": "Nazarbayev University",
+    "whereDetail": "Astana, Kazakhstan",
+    "whereAction": "Show on map →",
+    "how": "How?",
+    "howAnswer": "In teams of 3–4",
+    "howDetail": "One representative fills in the registration form for the whole team"
+  },
+  "about": {
+    "kicker": "About",
+    "editionOrdinal": "5th",
+    "annualEdition": "annual edition",
+    "roundsCount": "3",
+    "rounds": "rounds",
+    "prizeAmount": "1 000 000",
+    "prizeUnit": "₸",
+    "prizePool": "prize pool",
+    "title": "The biggest competition for girls",
+    "titleHighlight": "who dream of conquering IT",
+    "description": "<pink>Women’s Hack Day</pink> is an annual <pink>3-round team competition</pink>, where female high school, college, and university students can challenge themselves in various areas of software engineering and development. In teams of 3-4, participants will work together on tasks in <pink>mathematics, competitive programming, and product design</pink>.",
+    "organizers": "The organizer is the NU ACM-W Student Chapter — the first and only branch of ACM-Women in Kazakhstan and Central Asia. Our mission is to support women in STEM fields, especially in IT, through initiatives that foster social, professional, and technical growth.",
+    "imageAlt": "Women’s Hack Day illustration"
+  },
+  "timeline": {
+    "kicker": "Dates",
+    "title": "WHD 2025 Timeline",
+    "items": {
+      "registration": "October 8-22",
+      "registrationLabel": "Registration Period",
+      "confirmation": "October 23",
+      "confirmationLabel": "Confirmation Period",
+      "event": "October 25",
+      "eventLabel": "Women’s Hack Day"
+    }
+  },
+  "schedule": {
+    "kicker": "Event day",
+    "title": "WHD 2025 Schedule",
+    "events": {
+      "registration": "Registration",
+      "opening": "Opening Ceremony",
+      "mathematics": "Mathematics",
+      "programming": "Competitive Programming",
+      "coffeeBreak": "Coffee Break",
+      "productDesign": "Product Design",
+      "pitching": "Pitching",
+      "closing": "Closing Ceremony"
+    }
+  },
+  "benefits": {
+    "kicker": "What you get",
+    "title": "Benefits",
+    "prizePool": "1,000,000 ₸ Prize Pool",
+    "welcomePackage": "Welcome Package",
+    "merchandise": "Exclusive Merchandise",
+    "coffeeBreak": "Coffee Break & Networking",
+    "certificates": "Certificates of Participation",
+    "coaching": "3 spots for online career coaching with Freedom Broker's Director of Data & Analytics, Ekaterina Strukova"
+  },
+  "faq": {
+    "kicker": "Questions",
+    "title": "FAQ",
+    "categories": {
+      "general": "General",
+      "participation": "Participation",
+      "formatPrizes": "Format and Prizes",
+      "contact": "Still have questions?"
+    },
+    "questions": {
+      "whatIs": {
+        "q": "What is Women’s Hack Day?",
+        "a": "Women’s Hack Day (WHD) is an annual three-round team competition in mathematics, competitive programming, and product design - the biggest competition for girls who dream of conquering the world of IT."
+      },
+      "organizers": {
+        "q": "Who are the organisers of WHD?",
+        "a": "The organizer is the NU ACM-W Student Chapter - the first and only branch of ACM-Women in Kazakhstan and Central Asia. Our mission is to support women in STEM fields, especially in IT, through initiatives that foster social, professional, and technical growth."
+      },
+      "otherEvents": {
+        "q": "Are there any other events for girls?",
+        "a": "Yes! ACM-W annually organizes events for girls such as CodeW - an individual competitive programming contest, and Code Girl Summer - a two-week web development camp. You can find more details and information on our Telegram and Instagram pages."
+      },
+      "whoCanParticipate": {
+        "q": "Who can participate?",
+        "a": "Girls who are high school, college, and university students. Participation is in teams of 3-4 people."
+      },
+      "professional": {
+        "q": "Do I need to be a professional?",
+        "a": "No, everyone interested in IT is welcome to participate."
+      },
+      "noTeam": {
+        "q": "What if I don't have a team?",
+        "a": "You can find teammates in our <link href=\"https://t.me/WHD_chat\">Telegram chat</link>."
+      },
+      "howToParticipate": {
+        "q": "How can I participate?",
+        "a": "Form a team of 3-4 people, register, and come to Nazarbayev University on October 25, 2025. Please note that the registration form should be completed by one representative of the team. Registration deadline: October 22, 2025."
+      },
+      "online": {
+        "q": "Can I participate online?",
+        "a": "No, Women’s Hack Day 2025 will be held offline at Nazarbayev University, Astana, Kazakhstan."
+      },
+      "certificates": {
+        "q": "Will participants receive certificates or prizes?",
+        "a": "Yes, every participant will receive a certificate of participation. Winners will get cash prizes and merch, plus there will be welcome packages for the first 110 participants and a coffee break for everyone. Additionally, there are 3 spots for online career coaching with Freedom Broker's Director of Data and Analytics, Ekaterina Strukova."
+      },
+      "noAnswer": {
+        "q": "I didn't find an answer to my question. What should I do?",
+        "a": "Join our <link href=\"https://t.me/WHD_chat\">Telegram chat</link> and ask your questions there, or contact us via email: <link href=\"https://mail.google.com/mail/u/0/?fs=1&to=acm_w@nu.edu.kz&su&body&tf=cm\">acm_w@nu.edu.kz.</link>"
+      }
+    }
+  },
+  "partners": {
+    "kicker": "Supported by",
+    "title": "Partners",
+    "generalSponsor": "General Sponsor",
+    "infoPartners": "Info Partners",
+    "generalSponsorAlt": "Freedom Broker",
+    "infoPartnerAlt": "Info partner {{index}}"
+  },
+  "footer": {
+    "readyToJoin": "Ready to join?",
+    "register": "Register",
+    "instagram": "Instagram",
+    "telegram": "Telegram",
+    "tiktok": "TikTok",
+    "email": "Email",
+    "rights": "© 2025 NU ACM-W SC All rights reserved."
+  }
+}
