@@ -94,18 +94,16 @@ export default function Navbar({ session }: { session: Session }) {
                   {t(link.labelKey)}
                 </a>
               ))}
-
               <div className="px-3 py-2">
                 <LanguageSwitcher size="md" onLanguageChange={() => setIsOpen(false)} />
               </div>
-
               <Link
                 to={ctaTo}
                 onClick={() => setIsOpen(false)}
                 className={cn(buttonVariants({ variant: 'solid' }), 'w-full')}
               >
                 {ctaLabel}
-              </Link>
+              </Link>{' '}
             </div>
           </div>
         </div>
