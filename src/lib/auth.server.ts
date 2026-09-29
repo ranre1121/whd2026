@@ -15,6 +15,12 @@ interface AuthEnv {
   GOOGLE_CLIENT_SECRET?: string;
 }
 
+/** True when both Google OAuth secrets are set, so the login page can offer it. */
+export function isGoogleSignInEnabled() {
+  const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = env as unknown as AuthEnv;
+  return !!GOOGLE_CLIENT_ID && !!GOOGLE_CLIENT_SECRET;
+}
+
 /**
  * Request-time auth instance. Reads the D1 binding and secrets from the Workers
  * env, so it may only be imported from server code (server functions, API

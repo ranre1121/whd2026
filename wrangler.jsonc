@@ -11,9 +11,7 @@
     {
       "binding": "DB",
       "database_name": "whd-db",
-      // Replace with the id from `wrangler d1 create whd-db`.
-      // Local development (`npm run dev`) works without it.
-      "database_id": "PLACEHOLDER_RUN_WRANGLER_D1_CREATE",
+      "database_id": "462580d7-c6c1-4bd7-b887-40d3849733e1",
       "migrations_dir": "drizzle",
     },
   ],

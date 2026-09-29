@@ -8,7 +8,8 @@ import { AuthHeader } from '@/components/AuthHeader';
 import { AuthCard } from '@/components/ui/auth-card';
 import { EmailForm } from '@/components/login/EmailForm';
 import { OtpForm } from '@/components/login/OtpForm';
-import { getSession } from '@/lib/auth.server';
+import { GoogleButton } from '@/components/login/GoogleButton';
+import { getSession, isGoogleSignInEnabled } from '@/lib/auth.server';
 import { getParticipant } from '@/lib/onboarding.server';
 
 /**
@@ -23,17 +24,21 @@ const getPostLoginDestination = createServerFn({ method: 'GET' }).handler(async 
   return profile ? '/dashboard' : '/onboarding';
 });
 
+const getGoogleEnabled = createServerFn({ method: 'GET' }).handler(() => isGoogleSignInEnabled());
+
 export const Route = createFileRoute('/login')({
   beforeLoad: async () => {
     const destination = await getPostLoginDestination();
     if (destination) throw redirect({ to: destination });
   },
+  loader: async () => ({ googleEnabled: await getGoogleEnabled() }),
   component: LoginPage,
 });
 
 function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { googleEnabled } = Route.useLoaderData();
   const [email, setEmail] = useState<string | null>(null);
 
   const handleVerified = async () => {
@@ -46,6 +51,18 @@ function LoginPage() {
       <AuthHeader />
       {email === null ? (
         <AuthCard title={t('login.title')} subtitle={t('login.subtitle')}>
+          {googleEnabled && (
+            <>
+              <GoogleButton />
+              <div className="my-5 flex items-center gap-3">
+                <span className="bg-whd-border h-px flex-1" />
+                <span className="text-whd-text-dim text-xs tracking-widest uppercase">
+                  {t('login.or')}
+                </span>
+                <span className="bg-whd-border h-px flex-1" />
+              </div>
+            </>
+          )}
           <EmailForm onSent={setEmail} />
         </AuthCard>
       ) : (
