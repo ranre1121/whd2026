@@ -11,6 +11,7 @@ import { OtpForm } from '@/components/login/OtpForm';
 import { GoogleButton } from '@/components/login/GoogleButton';
 import { getSession, isGoogleSignInEnabled } from '@/lib/auth.server';
 import { getParticipant } from '@/lib/onboarding.server';
+import { safeInviteRedirect, validateRedirectSearch } from '@/lib/redirect';
 
 /**
  * Where a signed-in visitor belongs: onboarding until they have a profile,
@@ -27,9 +28,14 @@ const getPostLoginDestination = createServerFn({ method: 'GET' }).handler(async 
 const getGoogleEnabled = createServerFn({ method: 'GET' }).handler(() => isGoogleSignInEnabled());
 
 export const Route = createFileRoute('/login')({
-  beforeLoad: async () => {
+  // `?redirect=/invite/…` survives sign-in, so an invite link opened while
+  // signed out still ends on that invite (via onboarding if needed).
+  validateSearch: validateRedirectSearch,
+  beforeLoad: async ({ search }) => {
     const destination = await getPostLoginDestination();
-    if (destination) throw redirect({ to: destination });
+    if (destination === '/onboarding') throw redirect({ to: '/onboarding', search });
+    // Re-checked here as well as in validateSearch: this is where we navigate.
+    if (destination) throw redirect({ to: safeInviteRedirect(search.redirect) ?? destination });
   },
   loader: async () => ({ googleEnabled: await getGoogleEnabled() }),
   component: LoginPage,
@@ -39,11 +45,13 @@ function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { googleEnabled } = Route.useLoaderData();
+  const search = Route.useSearch();
   const [email, setEmail] = useState<string | null>(null);
 
   const handleVerified = async () => {
-    const destination = await getPostLoginDestination();
-    navigate({ to: destination ?? '/onboarding' });
+    const destination = (await getPostLoginDestination()) ?? '/onboarding';
+    if (destination === '/onboarding') navigate({ to: '/onboarding', search });
+    else navigate({ to: safeInviteRedirect(search.redirect) ?? destination });
   };
 
   return (
@@ -53,7 +61,7 @@ function LoginPage() {
         <AuthCard title={t('login.title')} subtitle={t('login.subtitle')}>
           {googleEnabled && (
             <>
-              <GoogleButton />
+              <GoogleButton redirect={search.redirect} />
               <div className="my-5 flex items-center gap-3">
                 <span className="bg-whd-border h-px flex-1" />
                 <span className="text-whd-text-dim text-xs tracking-widest uppercase">

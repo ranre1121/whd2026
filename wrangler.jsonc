@@ -15,4 +15,8 @@
       "migrations_dir": "drizzle",
     },
   ],
+  // Workers AI, for the dashboard's "generate a team name" button.
+  "ai": {
+    "binding": "AI",
+  },
 }

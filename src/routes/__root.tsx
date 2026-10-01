@@ -1,9 +1,21 @@
 import type { QueryClient } from '@tanstack/react-query';
-import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
+import {
+  HeadContent,
+  Link,
+  Scripts,
+  createRootRouteWithContext,
+  type ErrorComponentProps,
+} from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getCookie } from '@tanstack/react-start/server';
+import { TanStackDevtools } from '@tanstack/react-devtools';
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { useTranslation } from 'react-i18next';
 
+import { AuthHeader } from '@/components/AuthHeader';
+import { AuthCard } from '@/components/ui/auth-card';
+import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button-variants';
 import i18n from '@/i18n';
 import appCss from '@/styles.css?url';
 
@@ -12,7 +24,49 @@ const getServerLocale = createServerFn({ method: 'GET' }).handler(async () => {
   return getCookie('locale') || 'en';
 });
 
+function NotFoundPage() {
+  const { t } = useTranslation();
+  return (
+    <div className="bg-whd-dark flex min-h-screen flex-col">
+      <AuthHeader />
+      <AuthCard title={t('notFound.title')} subtitle={t('notFound.message')}>
+        <p className="text-whd-pink-bright mb-6 text-7xl font-black md:text-8xl">404</p>
+        <Link to="/" className={buttonVariants({ className: 'w-full' })}>
+          {t('notFound.goHome')}
+        </Link>
+      </AuthCard>
+    </div>
+  );
+}
+
+function RootErrorPage({ error, reset }: ErrorComponentProps) {
+  const { t } = useTranslation();
+  return (
+    <div className="bg-whd-dark flex min-h-screen flex-col">
+      <AuthHeader />
+      <AuthCard title={t('errorPage.title')} subtitle={t('errorPage.message')}>
+        {/* The raw message helps while developing; users never see internals. */}
+        {import.meta.env.DEV && (
+          <p className="mb-6 font-mono text-sm break-words text-red-400">
+            {error instanceof Error ? error.message : String(error)}
+          </p>
+        )}
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Button variant="outline" className="flex-1" onClick={() => reset()}>
+            {t('errorPage.retry')}
+          </Button>
+          <Link to="/" className={buttonVariants({ className: 'flex-1' })}>
+            {t('notFound.goHome')}
+          </Link>
+        </div>
+      </AuthCard>
+    </div>
+  );
+}
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  notFoundComponent: NotFoundPage,
+  errorComponent: RootErrorPage,
   beforeLoad: async () => {
     const locale = await getServerLocale();
     if (i18n.language !== locale) {
@@ -38,10 +92,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: 'og:url', content: 'https://whd.nuacmw.kz' },
       { property: 'og:image', content: '/WHDlogo.svg' },
+      { name: 'theme-color', content: '#bb046c' },
     ],
     links: [
       { rel: 'stylesheet', href: appCss },
       { rel: 'icon', type: 'image/svg+xml', href: '/WHDlogo.svg' },
+      { rel: 'apple-touch-icon', href: '/logo192.png' },
+      { rel: 'manifest', href: '/manifest.json' },
       { rel: 'canonical', href: 'https://whd.nuacmw.kz' },
     ],
   }),
@@ -57,6 +114,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        {import.meta.env.DEV && (
+          <TanStackDevtools
+            config={{ position: 'bottom-right' }}
+            plugins={[{ name: 'TanStack Router', render: <TanStackRouterDevtoolsPanel /> }]}
+          />
+        )}
         <Scripts />
       </body>
     </html>

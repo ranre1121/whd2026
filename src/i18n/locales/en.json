@@ -7,7 +7,8 @@
     "loading": "Loading…",
     "signOut": "Sign out",
     "copy": "Copy",
-    "copied": "Copied"
+    "copied": "Copied",
+    "confirm": "Sure?"
   },
   "navbar": {
     "about": "About",
@@ -22,9 +23,20 @@
     "title": "Women’s Hack Day",
     "tagline": "A three-round team competition for girls who dream of conquering the world of IT.",
     "countdownLabel": "Registration closes in",
-    "register": "Register",
     "imageAlt": "Women’s Hack Day illustration",
-    "dashboard": "Dashboard"
+    "cta": {
+      "register": "Register",
+      "onboarding": "Finish registration",
+      "team": "Find a team",
+      "ready": "Dashboard",
+      "incomplete": "Invite teammates"
+    },
+    "status": {
+      "onboarding": "You are signed in — fill in your details to complete registration.",
+      "team": "Your details are saved. Next, create or join a team.",
+      "ready": "You are registered with a team. See you at the event!",
+      "incomplete": "Your team needs at least {{min}} members to compete. Invite more teammates."
+    }
   },
   "countdown": {
     "days": "Days",
@@ -168,7 +180,9 @@
     "tiktok": "TikTok",
     "email": "Email",
     "rights": "© 2025 NU ACM-W SC All rights reserved.",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
   },
   "login": {
     "title": "Sign in",
@@ -230,10 +244,26 @@
     "dissolve": "Dissolve team",
     "teamIncomplete": "A team needs at least {{min}} members to compete.",
     "teamReady": "Your team is ready.",
-    "confirmKick": "Remove {{name}} from the team?",
-    "confirmLeave": "Leave this team?",
-    "confirmDissolve": "Dissolve this team for everyone?",
-    "actionFailed": "That did not work. Please try again."
+    "actionFailed": "That did not work. Please try again.",
+    "statusLabel": "Status",
+    "statusReady": "Ready",
+    "statusWarning": "Action needed",
+    "teamLabel": "Team",
+    "eventLabel": "Event",
+    "noTeamShort": "No team yet",
+    "emptySlot": "Open slot",
+    "generateName": "Suggest a team name",
+    "cancelGenerate": "Stop",
+    "generateCooldown": "Try again in {{seconds}}s",
+    "generating": "Thinking of a name…",
+    "generateFailed": "Could not come up with a name. Try again later.",
+    "registrationLocked": "Registration is closed, so team changes are locked.",
+    "registrationClosedNoTeam": "Registration is closed. You can no longer create or join a team.",
+    "feedbackCreated": "Team {{name}} created. Share the invite link with your teammates.",
+    "feedbackJoined": "You joined the team.",
+    "feedbackKicked": "{{name}} was removed from the team.",
+    "feedbackLeft": "You left the team.",
+    "feedbackDissolved": "The team was dissolved."
   },
   "validation": {
     "emailRequired": "Email is required",
@@ -288,21 +318,63 @@
     "statAttended": "Checked in",
     "tab_participants": "Participants",
     "tab_teams": "Teams",
-    "col_name": "Name",
-    "col_email": "Email",
-    "col_phone": "Phone",
-    "col_education": "Level",
-    "col_placeOfStudy": "Place of study",
-    "col_city": "City",
-    "col_team": "Team",
-    "col_attended": "In",
-    "col_captain": "Captain",
-    "col_size": "Size",
-    "col_eligible": "Eligible",
-    "col_members": "Members",
-    "attendedOf": "checked in of {{total}}",
-    "present": "Present",
-    "markPresent": "Mark present",
-    "noTeam": "No team"
+    "navReport": "Report",
+    "refresh": "Refresh",
+    "refreshing": "Refreshing…",
+    "refreshIn": "Refresh in {{seconds}}s",
+    "columns": "Columns",
+    "showAll": "Show all",
+    "hideAll": "Hide all",
+    "filterLabel": "Filter",
+    "filterAll": "All",
+    "filterEligible": "Eligible",
+    "filterNotEligible": "Not eligible",
+    "filterAttended": "Checked in",
+    "filterNotAttended": "Not checked in",
+    "showingCount": "{{shown}} of {{total}}",
+    "teamSearchPlaceholder": "Search team, captain, member…",
+    "eligibleBreakdown": "{{eligible}} eligible / {{other}} not",
+    "checkinScope": "Only teams with at least {{min}} members are listed.",
+    "statEligibleParticipants": "Eligible participants",
+    "attendanceBreakdown": "{{present}} in / {{absent}} not yet",
+    "teamStatusBreakdown": "{{ready}} ready / {{partial}} partial / {{noShow}} no-show",
+    "statusReady": "Ready",
+    "statusPartial": "Partial",
+    "statusNoShow": "No-show",
+    "markPresentLabel": "Mark {{name}} as checked in",
+    "markAbsentLabel": "Mark {{name}} as not checked in",
+    "confirmAbsentTitle": "Undo check-in?",
+    "confirmAbsentBody": "{{name}} will be marked as not checked in.",
+    "markAbsent": "Undo check-in",
+    "attendanceFailed": "Could not update attendance. Try again.",
+    "col": {
+      "fullName": "Name",
+      "email": "Email",
+      "iin": "IIN",
+      "phone": "Phone",
+      "parentPhone": "Parent phone",
+      "city": "City",
+      "placeOfStudy": "Place of study",
+      "educationLevel": "Level",
+      "teamName": "Team",
+      "attended": "Checked in",
+      "createdAt": "Registered",
+      "name": "Team",
+      "captainName": "Captain",
+      "memberCount": "Size",
+      "eligible": "Eligible",
+      "members": "Members",
+      "inviteSlug": "Invite code"
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "message": "The page you are looking for does not exist or has moved.",
+    "goHome": "Go home"
+  },
+  "errorPage": {
+    "title": "Something went wrong",
+    "message": "This page could not be loaded. Try again, or go back home.",
+    "retry": "Try again"
   }
 }

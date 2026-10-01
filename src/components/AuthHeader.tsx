@@ -1,11 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { Button } from '@/components/ui/button';
+import { ConfirmButton } from '@/components/ui/confirm-button';
 import { authClient } from '@/lib/auth-client';
 
-/** Slim header for the signed-in pages: logo, language, sign out. */
-export function AuthHeader({ showSignOut = false }: { showSignOut?: boolean }) {
+/** Slim header for the signed-in pages: logo, language, who is signed in, sign out. */
+export function AuthHeader({
+  showSignOut = false,
+  email,
+}: {
+  showSignOut?: boolean;
+  email?: string;
+}) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -23,10 +29,15 @@ export function AuthHeader({ showSignOut = false }: { showSignOut?: boolean }) {
 
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
+          {email && <span className="hidden text-sm text-white/80 sm:inline">{email}</span>}
           {showSignOut && (
-            <Button variant="ghost" size="sm" onClick={handleSignOut}>
-              {t('common.signOut')}
-            </Button>
+            <ConfirmButton
+              variant="ghost"
+              label={t('common.signOut')}
+              confirmLabel={t('common.confirm')}
+              onConfirm={handleSignOut}
+              armedClassName="bg-white text-whd-pink hover:bg-white/90 hover:text-whd-pink"
+            />
           )}
         </div>
       </div>

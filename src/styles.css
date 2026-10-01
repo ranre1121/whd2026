@@ -166,3 +166,26 @@ body {
   background: rgba(187, 4, 108, 0.45);
   color: #ffffff;
 }
+
+/* Admin report: flash a row after jumping to it from the other tab */
+.admin-highlight {
+  background-color: rgb(187 4 108 / 0.12);
+  outline: 1px solid rgb(255 157 213 / 0.4);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .admin-highlight {
+    animation: admin-row-highlight 2s ease-out forwards;
+  }
+}
+
+@keyframes admin-row-highlight {
+  0% {
+    background-color: rgb(187 4 108 / 0.3);
+    outline-color: rgb(255 157 213 / 0.5);
+  }
+  100% {
+    background-color: rgb(187 4 108 / 0);
+    outline-color: rgb(255 157 213 / 0);
+  }
+}

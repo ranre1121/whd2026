@@ -7,7 +7,8 @@
     "loading": "Жүктелуде…",
     "signOut": "Шығу",
     "copy": "Көшіру",
-    "copied": "Көшірілді"
+    "copied": "Көшірілді",
+    "confirm": "Сенімдісің бе?"
   },
   "navbar": {
     "about": "WHD туралы",
@@ -22,9 +23,20 @@
     "title": "Women’s Hack Day",
     "tagline": "IT әлемін бағындырғысы келетін қыздарға арналған үш раундтан тұратын командалық жарыс.",
     "countdownLabel": "Тіркелу аяқталуына",
-    "register": "Тіркелу",
     "imageAlt": "Women’s Hack Day иллюстрациясы",
-    "dashboard": "Кабинет"
+    "cta": {
+      "register": "Тіркелу",
+      "onboarding": "Тіркелуді аяқтау",
+      "team": "Команда табу",
+      "ready": "Жеке кабинет",
+      "incomplete": "Командаластарды шақыру"
+    },
+    "status": {
+      "onboarding": "Аккаунтқа кірдің — тіркелуді аяқтау үшін деректеріңді толтыр.",
+      "team": "Деректерің сақталды. Енді команда құр немесе оған қосыл.",
+      "ready": "Сен командамен тіркелдің. Іс-шарада кездескенше!",
+      "incomplete": "Жарысқа қатысу үшін командада кемінде {{min}} қатысушы болуы керек. Тағы шақыр."
+    }
   },
   "countdown": {
     "days": "Күн",
@@ -168,7 +180,9 @@
     "tiktok": "TikTok",
     "email": "Email",
     "rights": "© 2025 NU ACM-W SC Барлық құқықтар қорғалған.",
-    "dashboard": "Кабинет"
+    "dashboard": "Кабинет",
+    "privacy": "Құпиялылық саясаты",
+    "terms": "Пайдалану шарттары"
   },
   "login": {
     "title": "Кіру",
@@ -230,10 +244,26 @@
     "dissolve": "Команданы тарату",
     "teamIncomplete": "Командада кемінде {{min}} қатысушы болуы керек.",
     "teamReady": "Команда дайын.",
-    "confirmKick": "{{name}} командадан шығарылсын ба?",
-    "confirmLeave": "Командадан шығасың ба?",
-    "confirmDissolve": "Команда барлығы үшін таратылсын ба?",
-    "actionFailed": "Болмады. Қайталап көр."
+    "actionFailed": "Болмады. Қайталап көр.",
+    "statusLabel": "Күйі",
+    "statusReady": "Дайын",
+    "statusWarning": "Әрекет қажет",
+    "teamLabel": "Команда",
+    "eventLabel": "Іс-шара",
+    "noTeamShort": "Әзірге командасыз",
+    "emptySlot": "Бос орын",
+    "generateName": "Атау ұсыну",
+    "cancelGenerate": "Тоқтату",
+    "generateCooldown": "{{seconds}} с кейін қайталау",
+    "generating": "Атау ойлап жатырмыз…",
+    "generateFailed": "Атау ойлап табу мүмкін болмады. Кейінірек қайталап көр.",
+    "registrationLocked": "Тіркелу жабық, командадағы өзгерістер құлыпталған.",
+    "registrationClosedNoTeam": "Тіркелу жабық. Енді команда құруға немесе оған қосылуға болмайды.",
+    "feedbackCreated": "{{name}} командасы құрылды. Шақыру сілтемесін командаластарыңа жібер.",
+    "feedbackJoined": "Сен командаға қосылдың.",
+    "feedbackKicked": "{{name}} командадан шығарылды.",
+    "feedbackLeft": "Сен командадан шықтың.",
+    "feedbackDissolved": "Команда таратылды."
   },
   "validation": {
     "emailRequired": "Поштаңды енгіз",
@@ -288,21 +318,63 @@
     "statAttended": "Белгіленген",
     "tab_participants": "Қатысушылар",
     "tab_teams": "Командалар",
-    "col_name": "Аты",
-    "col_email": "Пошта",
-    "col_phone": "Телефон",
-    "col_education": "Деңгей",
-    "col_placeOfStudy": "Оқу орны",
-    "col_city": "Қала",
-    "col_team": "Команда",
-    "col_attended": "Келді",
-    "col_captain": "Капитан",
-    "col_size": "Саны",
-    "col_eligible": "Жіберілді",
-    "col_members": "Құрамы",
-    "attendedOf": "{{total}} ішінен белгіленді",
-    "present": "Келді",
-    "markPresent": "Белгілеу",
-    "noTeam": "Командасыз"
+    "navReport": "Есеп",
+    "refresh": "Жаңарту",
+    "refreshing": "Жаңартылуда…",
+    "refreshIn": "{{seconds}} с кейін жаңарту",
+    "columns": "Бағандар",
+    "showAll": "Барлығын көрсету",
+    "hideAll": "Барлығын жасыру",
+    "filterLabel": "Сүзгі",
+    "filterAll": "Барлығы",
+    "filterEligible": "Рұқсат етілген",
+    "filterNotEligible": "Рұқсат етілмеген",
+    "filterAttended": "Белгіленген",
+    "filterNotAttended": "Белгіленбеген",
+    "showingCount": "{{total}} ішінен {{shown}}",
+    "teamSearchPlaceholder": "Команда, капитан, қатысушы бойынша іздеу…",
+    "eligibleBreakdown": "{{eligible}} рұқсат / {{other}} жоқ",
+    "checkinScope": "Кемінде {{min}} қатысушысы бар командалар ғана көрсетілген.",
+    "statEligibleParticipants": "Рұқсат етілген қатысушылар",
+    "attendanceBreakdown": "{{present}} келді / {{absent}} әлі жоқ",
+    "teamStatusBreakdown": "{{ready}} дайын / {{partial}} жартылай / {{noShow}} келмеді",
+    "statusReady": "Дайын",
+    "statusPartial": "Жартылай",
+    "statusNoShow": "Келмеді",
+    "markPresentLabel": "{{name}} келді деп белгілеу",
+    "markAbsentLabel": "{{name}} белгісін алып тастау",
+    "confirmAbsentTitle": "Белгіні алып тастау керек пе?",
+    "confirmAbsentBody": "{{name}} келмеді деп белгіленеді.",
+    "markAbsent": "Белгіні алып тастау",
+    "attendanceFailed": "Белгіні жаңарту мүмкін болмады. Қайталап көр.",
+    "col": {
+      "fullName": "Аты-жөні",
+      "email": "Пошта",
+      "iin": "ЖСН",
+      "phone": "Телефон",
+      "parentPhone": "Ата-ананың телефоны",
+      "city": "Қала",
+      "placeOfStudy": "Оқу орны",
+      "educationLevel": "Деңгейі",
+      "teamName": "Команда",
+      "attended": "Келді",
+      "createdAt": "Тіркелген",
+      "name": "Команда",
+      "captainName": "Капитан",
+      "memberCount": "Саны",
+      "eligible": "Рұқсат",
+      "members": "Қатысушылар",
+      "inviteSlug": "Шақыру коды"
+    }
+  },
+  "notFound": {
+    "title": "Бет табылмады",
+    "message": "Мұндай бет жоқ немесе ол басқа жерге көшті.",
+    "goHome": "Басты бетке"
+  },
+  "errorPage": {
+    "title": "Бірдеңе дұрыс болмады",
+    "message": "Бетті жүктеу мүмкін болмады. Қайталап көр немесе басты бетке орал.",
+    "retry": "Қайталау"
   }
 }

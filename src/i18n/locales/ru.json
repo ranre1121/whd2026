@@ -7,7 +7,8 @@
     "loading": "Загрузка…",
     "signOut": "Выйти",
     "copy": "Копировать",
-    "copied": "Скопировано"
+    "copied": "Скопировано",
+    "confirm": "Точно?"
   },
   "navbar": {
     "about": "О WHD",
@@ -22,9 +23,20 @@
     "title": "Women’s Hack Day",
     "tagline": "Командное соревнование из трёх раундов для девушек, мечтающих покорить мир IT.",
     "countdownLabel": "До конца регистрации",
-    "register": "Регистрация",
     "imageAlt": "Иллюстрация Women’s Hack Day",
-    "dashboard": "Кабинет"
+    "cta": {
+      "register": "Регистрация",
+      "onboarding": "Завершить регистрацию",
+      "team": "Найти команду",
+      "ready": "Личный кабинет",
+      "incomplete": "Пригласить участниц"
+    },
+    "status": {
+      "onboarding": "Ты вошла в аккаунт — заполни данные, чтобы завершить регистрацию.",
+      "team": "Данные сохранены. Теперь создай команду или вступи в неё.",
+      "ready": "Ты зарегистрирована в команде. Увидимся на мероприятии!",
+      "incomplete": "Для участия в команде должно быть минимум {{min}} участницы. Пригласи ещё."
+    }
   },
   "countdown": {
     "days": "дней",
@@ -168,7 +180,9 @@
     "tiktok": "TikTok",
     "email": "Email",
     "rights": "© 2025 NU ACM-W SC Все права защищены.",
-    "dashboard": "Кабинет"
+    "dashboard": "Кабинет",
+    "privacy": "Политика конфиденциальности",
+    "terms": "Условия использования"
   },
   "login": {
     "title": "Вход",
@@ -230,10 +244,26 @@
     "dissolve": "Распустить команду",
     "teamIncomplete": "В команде должно быть минимум {{min}} участницы.",
     "teamReady": "Команда готова.",
-    "confirmKick": "Удалить {{name}} из команды?",
-    "confirmLeave": "Покинуть команду?",
-    "confirmDissolve": "Распустить команду для всех?",
-    "actionFailed": "Не получилось. Попробуй ещё раз."
+    "actionFailed": "Не получилось. Попробуй ещё раз.",
+    "statusLabel": "Статус",
+    "statusReady": "Готово",
+    "statusWarning": "Нужно действие",
+    "teamLabel": "Команда",
+    "eventLabel": "Мероприятие",
+    "noTeamShort": "Пока без команды",
+    "emptySlot": "Свободное место",
+    "generateName": "Предложить название",
+    "cancelGenerate": "Стоп",
+    "generateCooldown": "Повтор через {{seconds}} с",
+    "generating": "Придумываем название…",
+    "generateFailed": "Не удалось придумать название. Попробуй позже.",
+    "registrationLocked": "Регистрация закрыта, изменения в команде недоступны.",
+    "registrationClosedNoTeam": "Регистрация закрыта. Создать команду или вступить в неё больше нельзя.",
+    "feedbackCreated": "Команда {{name}} создана. Отправь ссылку-приглашение участницам.",
+    "feedbackJoined": "Ты вступила в команду.",
+    "feedbackKicked": "{{name}} удалена из команды.",
+    "feedbackLeft": "Ты вышла из команды.",
+    "feedbackDissolved": "Команда расформирована."
   },
   "validation": {
     "emailRequired": "Укажи почту",
@@ -288,21 +318,63 @@
     "statAttended": "Отмечены",
     "tab_participants": "Участницы",
     "tab_teams": "Команды",
-    "col_name": "Имя",
-    "col_email": "Почта",
-    "col_phone": "Телефон",
-    "col_education": "Уровень",
-    "col_placeOfStudy": "Место учёбы",
-    "col_city": "Город",
-    "col_team": "Команда",
-    "col_attended": "На месте",
-    "col_captain": "Капитан",
-    "col_size": "Размер",
-    "col_eligible": "Допущена",
-    "col_members": "Состав",
-    "attendedOf": "из {{total}} отмечены",
-    "present": "На месте",
-    "markPresent": "Отметить",
-    "noTeam": "Без команды"
+    "navReport": "Отчёт",
+    "refresh": "Обновить",
+    "refreshing": "Обновляем…",
+    "refreshIn": "Обновить через {{seconds}} с",
+    "columns": "Столбцы",
+    "showAll": "Показать все",
+    "hideAll": "Скрыть все",
+    "filterLabel": "Фильтр",
+    "filterAll": "Все",
+    "filterEligible": "Допущены",
+    "filterNotEligible": "Не допущены",
+    "filterAttended": "Отмечены",
+    "filterNotAttended": "Не отмечены",
+    "showingCount": "{{shown}} из {{total}}",
+    "teamSearchPlaceholder": "Поиск по команде, капитану, участнице…",
+    "eligibleBreakdown": "{{eligible}} допущено / {{other}} нет",
+    "checkinScope": "Показаны только команды, в которых не меньше {{min}} участниц.",
+    "statEligibleParticipants": "Допущенные участницы",
+    "attendanceBreakdown": "{{present}} пришли / {{absent}} ещё нет",
+    "teamStatusBreakdown": "{{ready}} готовы / {{partial}} частично / {{noShow}} не пришли",
+    "statusReady": "Готовы",
+    "statusPartial": "Частично",
+    "statusNoShow": "Не пришли",
+    "markPresentLabel": "Отметить {{name}} как пришедшую",
+    "markAbsentLabel": "Снять отметку с {{name}}",
+    "confirmAbsentTitle": "Снять отметку?",
+    "confirmAbsentBody": "{{name}} будет отмечена как не пришедшая.",
+    "markAbsent": "Снять отметку",
+    "attendanceFailed": "Не удалось обновить отметку. Попробуй ещё раз.",
+    "col": {
+      "fullName": "Имя",
+      "email": "Почта",
+      "iin": "ИИН",
+      "phone": "Телефон",
+      "parentPhone": "Телефон родителя",
+      "city": "Город",
+      "placeOfStudy": "Место учёбы",
+      "educationLevel": "Уровень",
+      "teamName": "Команда",
+      "attended": "Пришла",
+      "createdAt": "Регистрация",
+      "name": "Команда",
+      "captainName": "Капитан",
+      "memberCount": "Размер",
+      "eligible": "Допущена",
+      "members": "Участницы",
+      "inviteSlug": "Код приглашения"
+    }
+  },
+  "notFound": {
+    "title": "Страница не найдена",
+    "message": "Такой страницы нет или она переехала.",
+    "goHome": "На главную"
+  },
+  "errorPage": {
+    "title": "Что-то пошло не так",
+    "message": "Не удалось загрузить страницу. Попробуй ещё раз или вернись на главную.",
+    "retry": "Попробовать снова"
   }
 }

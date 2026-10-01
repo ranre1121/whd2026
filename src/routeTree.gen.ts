@@ -14,9 +14,12 @@ import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminAdminRouteImport } from './routes/_admin/admin'
 import { Route as AdminCheckinRouteImport } from './routes/_admin/checkin'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
+import { Route as ApiReportRouteImport } from './routes/api/report'
 import { Route as InviteSlugRouteImport } from './routes/invite.$slug'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
@@ -43,6 +46,16 @@ const OnboardingRoute = OnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminAdminRoute = AdminAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -57,6 +70,11 @@ const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => ProtectedRoute,
+} as any)
+const ApiReportRoute = ApiReportRouteImport.update({
+  id: '/api/report',
+  path: '/api/report',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const InviteSlugRoute = InviteSlugRouteImport.update({
   id: '/invite/$slug',
@@ -73,9 +91,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AdminAdminRoute
   '/checkin': typeof AdminCheckinRoute
   '/dashboard': typeof ProtectedDashboardRoute
+  '/api/report': typeof ApiReportRoute
   '/invite/$slug': typeof InviteSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -83,9 +104,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AdminAdminRoute
   '/checkin': typeof AdminCheckinRoute
   '/dashboard': typeof ProtectedDashboardRoute
+  '/api/report': typeof ApiReportRoute
   '/invite/$slug': typeof InviteSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -96,9 +120,12 @@ export interface FileRoutesById {
   '/_protected': typeof ProtectedRouteWithChildren
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/_admin/admin': typeof AdminAdminRoute
   '/_admin/checkin': typeof AdminCheckinRoute
   '/_protected/dashboard': typeof ProtectedDashboardRoute
+  '/api/report': typeof ApiReportRoute
   '/invite/$slug': typeof InviteSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -108,9 +135,12 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/onboarding'
+    | '/privacy'
+    | '/terms'
     | '/admin'
     | '/checkin'
     | '/dashboard'
+    | '/api/report'
     | '/invite/$slug'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
@@ -118,9 +148,12 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/onboarding'
+    | '/privacy'
+    | '/terms'
     | '/admin'
     | '/checkin'
     | '/dashboard'
+    | '/api/report'
     | '/invite/$slug'
     | '/api/auth/$'
   id:
@@ -130,9 +163,12 @@ export interface FileRouteTypes {
     | '/_protected'
     | '/login'
     | '/onboarding'
+    | '/privacy'
+    | '/terms'
     | '/_admin/admin'
     | '/_admin/checkin'
     | '/_protected/dashboard'
+    | '/api/report'
     | '/invite/$slug'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
@@ -143,6 +179,9 @@ export interface RootRouteChildren {
   ProtectedRoute: typeof ProtectedRouteWithChildren
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
+  PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
+  ApiReportRoute: typeof ApiReportRoute
   InviteSlugRoute: typeof InviteSlugRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
@@ -184,6 +223,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_admin/admin': {
       id: '/_admin/admin'
       path: '/admin'
@@ -204,6 +257,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard'
       preLoaderRoute: typeof ProtectedDashboardRouteImport
       parentRoute: typeof ProtectedRoute
+    }
+    '/api/report': {
+      id: '/api/report'
+      path: '/api/report'
+      fullPath: '/api/report'
+      preLoaderRoute: typeof ApiReportRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/invite/$slug': {
       id: '/invite/$slug'
@@ -252,6 +312,9 @@ const rootRouteChildren: RootRouteChildren = {
   ProtectedRoute: ProtectedRouteWithChildren,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
+  PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
+  ApiReportRoute: ApiReportRoute,
   InviteSlugRoute: InviteSlugRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }

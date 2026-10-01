@@ -1,39 +1,90 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useWebHaptics } from 'web-haptics/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field } from '@/components/ui/field';
 import { Card, CardContent } from '@/components/ui/card';
 import { createTeamSchema, inviteSlugSchema } from '@/lib/validation';
+import { webHapticsOptions } from '@/lib/web-haptics';
+
+/** Pause after each generation (and a shorter one after cancelling) to spare Workers AI. */
+const GENERATE_COOLDOWN_MS = 5000;
+const CANCEL_COOLDOWN_MS = 3000;
+
+function SparkleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-4 w-4">
+      <path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9L12 2zm7 12l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9L19 14z" />
+    </svg>
+  );
+}
+
+function StopIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-3.5 w-3.5">
+      <rect x="5" y="5" width="14" height="14" rx="2" />
+    </svg>
+  );
+}
+
+/** Seconds left until `until`, ticking while a cooldown is running. */
+function useCountdown(until: number) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (until <= Date.now()) return;
+    const id = setInterval(() => {
+      setNow(Date.now());
+      if (Date.now() >= until) clearInterval(id);
+    }, 250);
+    return () => clearInterval(id);
+  }, [until]);
+  return Math.max(0, Math.ceil((until - now) / 1000));
+}
 
 /** Shown when a participant has no team: create one, or join with a code. */
 export function NoTeamCard({
+  registrationOpen,
   onCreate,
   onJoin,
+  onGenerate,
 }: {
+  registrationOpen: boolean;
   onCreate: (name: string) => Promise<void>;
   onJoin: (slug: string) => Promise<void>;
+  /** Asks the AI for a team name suggestion. */
+  onGenerate: () => Promise<string>;
 }) {
   const { t } = useTranslation();
+  const { trigger } = useWebHaptics(webHapticsOptions);
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [nameError, setNameError] = useState<string | null>(null);
   const [slugError, setSlugError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
+  const [generating, setGenerating] = useState(false);
+  const [cooldownUntil, setCooldownUntil] = useState(0);
+  const cooldownSeconds = useCountdown(cooldownUntil);
+  // Each generation gets an id; cancelling bumps it so a late reply is ignored.
+  const generationRef = useRef(0);
+
+  const fail = (setError: (m: string) => void, message: string) => {
+    trigger('error');
+    setError(message);
+  };
+
   const submitCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setNameError(null);
     const parsed = createTeamSchema.safeParse({ name });
-    if (!parsed.success) {
-      setNameError(t(parsed.error.issues[0].message));
-      return;
-    }
+    if (!parsed.success) return fail(setNameError, t(parsed.error.issues[0].message));
     setPending(true);
     try {
       await onCreate(parsed.data.name);
     } catch (err) {
-      setNameError(err instanceof Error ? err.message : t('dashboard.actionFailed'));
+      // Server errors may be i18n keys (registration closed); t() passes plain text through.
+      fail(setNameError, err instanceof Error ? t(err.message) : t('dashboard.actionFailed'));
     } finally {
       setPending(false);
     }
@@ -45,19 +96,57 @@ export function NoTeamCard({
     // Accept a full invite URL as well as a bare code.
     const cleaned = slug.trim().replace(/^.*\/invite\//, '');
     const parsed = inviteSlugSchema.safeParse({ slug: cleaned });
-    if (!parsed.success) {
-      setSlugError(t(parsed.error.issues[0].message));
-      return;
-    }
+    if (!parsed.success) return fail(setSlugError, t(parsed.error.issues[0].message));
     setPending(true);
     try {
       await onJoin(parsed.data.slug);
     } catch (err) {
-      setSlugError(err instanceof Error ? err.message : t('dashboard.actionFailed'));
+      fail(setSlugError, err instanceof Error ? t(err.message) : t('dashboard.actionFailed'));
     } finally {
       setPending(false);
     }
   };
+
+  const generate = async () => {
+    const id = ++generationRef.current;
+    setNameError(null);
+    setGenerating(true);
+    setCooldownUntil(Date.now() + GENERATE_COOLDOWN_MS);
+    try {
+      const suggestion = await onGenerate();
+      if (id !== generationRef.current) return;
+      setName(suggestion);
+      trigger('success');
+    } catch {
+      if (id !== generationRef.current) return;
+      fail(setNameError, t('dashboard.generateFailed'));
+    } finally {
+      if (id === generationRef.current) setGenerating(false);
+    }
+  };
+
+  const cancelGenerate = () => {
+    generationRef.current++;
+    setGenerating(false);
+    setCooldownUntil(Date.now() + CANCEL_COOLDOWN_MS);
+  };
+
+  const generateLabel = generating
+    ? t('dashboard.cancelGenerate')
+    : cooldownSeconds > 0
+      ? t('dashboard.generateCooldown', { seconds: cooldownSeconds })
+      : t('dashboard.generateName');
+
+  if (!registrationOpen) {
+    return (
+      <Card>
+        <CardContent>
+          <h2 className="text-xl font-bold text-white md:text-2xl">{t('dashboard.noTeam')}</h2>
+          <p className="mt-3 text-sm text-amber-200">{t('dashboard.registrationClosedNoTeam')}</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -72,16 +161,34 @@ export function NoTeamCard({
         <form onSubmit={submitCreate} className="flex flex-col gap-3" noValidate>
           <Field label={t('dashboard.teamNameLabel')} error={nameError ?? undefined}>
             {(p) => (
-              <Input
-                {...p}
-                value={name}
-                placeholder={t('dashboard.teamNamePlaceholder')}
-                onChange={(e) => setName(e.target.value)}
-                disabled={pending}
-              />
+              <div className="relative">
+                <Input
+                  {...p}
+                  value={name}
+                  placeholder={t('dashboard.teamNamePlaceholder')}
+                  onChange={(e) => setName(e.target.value)}
+                  disabled={pending || generating}
+                  className="pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={generating ? cancelGenerate : generate}
+                  disabled={pending || (!generating && cooldownSeconds > 0)}
+                  aria-label={generateLabel}
+                  title={generateLabel}
+                  className="text-whd-pink-soft hover:text-whd-pink-bright absolute inset-y-0 right-0 flex w-11 cursor-pointer items-center justify-center rounded-r-lg transition-colors hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {generating ? <StopIcon /> : <SparkleIcon />}
+                </button>
+              </div>
             )}
           </Field>
-          <Button type="submit" disabled={pending}>
+          {generating && (
+            <p className="text-whd-text-muted -mt-1 text-sm" aria-live="polite">
+              {t('dashboard.generating')}
+            </p>
+          )}
+          <Button type="submit" disabled={pending || generating}>
             {t('dashboard.createTeam')}
           </Button>
         </form>

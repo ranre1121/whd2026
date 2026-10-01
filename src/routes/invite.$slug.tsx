@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useWebHaptics } from 'web-haptics/react';
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
@@ -11,6 +13,7 @@ import { getParticipant } from '@/lib/onboarding.server';
 import { getTeamBySlug, joinTeamBySlug } from '@/lib/team.server';
 import { isRegistrationOpen, REGISTRATION_CLOSED_I18N_KEY } from '@/lib/registration.server';
 import { inviteSlugSchema } from '@/lib/validation';
+import { webHapticsOptions } from '@/lib/web-haptics';
 
 /**
  * Resolve an invite link. Anonymous or un-onboarded visitors are sent through
@@ -45,8 +48,10 @@ const acceptInvite = createServerFn({ method: 'POST' })
 export const Route = createFileRoute('/invite/$slug')({
   loader: async ({ params }) => {
     const result = await resolveInvite({ data: { slug: params.slug } });
-    if (result.status === 'anonymous') throw redirect({ to: '/login' });
-    if (result.status === 'needs-onboarding') throw redirect({ to: '/onboarding' });
+    // Come back here after signing in / finishing the profile.
+    const search = { redirect: `/invite/${params.slug}` };
+    if (result.status === 'anonymous') throw redirect({ to: '/login', search });
+    if (result.status === 'needs-onboarding') throw redirect({ to: '/onboarding', search });
     return result;
   },
   component: InvitePage,
@@ -57,6 +62,24 @@ function InvitePage() {
   const navigate = useNavigate();
   const { slug } = Route.useParams();
   const result = Route.useLoaderData();
+  const { trigger } = useWebHaptics(webHapticsOptions);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const join = async () => {
+    setError(null);
+    setPending(true);
+    try {
+      await acceptInvite({ data: { slug } });
+      trigger('success');
+      navigate({ to: '/dashboard' });
+    } catch (err) {
+      trigger('error');
+      // Server errors may be i18n keys (registration closed); t() passes plain text through.
+      setError(err instanceof Error ? t(err.message) : t('dashboard.actionFailed'));
+      setPending(false);
+    }
+  };
 
   const messages: Record<string, string> = {
     'not-found': t('validation.inviteCodeInvalid'),
@@ -76,15 +99,16 @@ function InvitePage() {
         }
       >
         {result.status === 'can-join' ? (
-          <Button
-            className="w-full"
-            onClick={async () => {
-              await acceptInvite({ data: { slug } });
-              navigate({ to: '/dashboard' });
-            }}
-          >
-            {t('invite.join')}
-          </Button>
+          <div className="flex flex-col gap-3">
+            <Button className="w-full" disabled={pending} onClick={join}>
+              {pending ? t('common.loading') : t('invite.join')}
+            </Button>
+            {error && (
+              <p role="alert" className="text-sm text-red-400">
+                {error}
+              </p>
+            )}
+          </div>
         ) : (
           <Button
             variant="outline"

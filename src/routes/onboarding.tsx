@@ -10,6 +10,7 @@ import { ensureSession, getSession } from '@/lib/auth.server';
 import { getParticipant, upsertParticipant } from '@/lib/onboarding.server';
 import { isRegistrationOpen, REGISTRATION_CLOSED_I18N_KEY } from '@/lib/registration.server';
 import { onboardingSchema } from '@/lib/validation';
+import { safeInviteRedirect, validateRedirectSearch } from '@/lib/redirect';
 
 /** Existing profile values, so onboarding doubles as "edit my details". */
 const loadProfile = createServerFn({ method: 'GET' }).handler(async () => {
@@ -47,9 +48,11 @@ const saveProfile = createServerFn({ method: 'POST' })
   });
 
 export const Route = createFileRoute('/onboarding')({
-  loader: async () => {
+  validateSearch: validateRedirectSearch,
+  loaderDeps: ({ search }) => search,
+  loader: async ({ deps }) => {
     const result = await loadProfile();
-    if (!result.authed) throw redirect({ to: '/login' });
+    if (!result.authed) throw redirect({ to: '/login', search: deps });
     return result;
   },
   component: OnboardingPage,
@@ -59,6 +62,7 @@ function OnboardingPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { defaults } = Route.useLoaderData();
+  const { redirect: inviteRedirect } = Route.useSearch();
 
   return (
     <div className="bg-whd-dark flex min-h-screen flex-col">
@@ -72,7 +76,7 @@ function OnboardingPage() {
           defaults={defaults}
           onSubmit={async (values) => {
             await saveProfile({ data: values });
-            navigate({ to: '/dashboard' });
+            navigate({ to: safeInviteRedirect(inviteRedirect) ?? '/dashboard' });
           }}
         />
       </AuthCard>

@@ -14,6 +14,7 @@
     "db:studio:local": "drizzle-kit studio --config drizzle.config.local.ts",
     "db:studio:remote": "drizzle-kit studio",
     "types": "wrangler types",
+    "test": "vitest run",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -40,6 +41,7 @@
     "react-i18next": "^16.5.4",
     "tailwind-merge": "^3.5.0",
     "three": "^0.183.2",
+    "web-haptics": "^0.0.6",
     "zod": "^4.6.5"
   },
   "devDependencies": {
@@ -48,6 +50,9 @@
     "@cloudflare/workers-types": "^5.20260922.1",
     "@eslint/js": "^10.0.1",
     "@tailwindcss/vite": "^4.2.1",
+    "@tanstack/devtools-vite": "^0.8.5",
+    "@tanstack/react-devtools": "^0.10.13",
+    "@tanstack/react-router-devtools": "^1.167.2",
     "@tanstack/router-plugin": "^1.168.40",
     "@types/node": "^25.3.3",
     "@types/react": "~19.2.14",
@@ -61,11 +66,15 @@
     "globals": "^17.12.0",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
+    "sharp": "^0.35.5",
+    "svgo": "^4.1.0",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.1",
     "vite": "^7.3.1",
+    "vite-plugin-image-optimizer": "^2.0.3",
     "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.11",
     "wrangler": "^4.136.3"
   }
 }

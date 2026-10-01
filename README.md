@@ -34,6 +34,7 @@ Port 3001, because `hacknu-2026` runs on 3000.
 | `npm run db:migrate:remote`       | Apply migrations to the deployed D1                     |
 | `npm run db:studio:local`         | Browse the local database                               |
 | `npm run auth:generate`           | Regenerate `src/db/auth-schema.ts` from the auth config |
+| `npm test`                        | Vitest unit tests (`src/**/*.test.ts`)                  |
 | `npm run lint` / `npm run format` | ESLint / Prettier                                       |
 
 ## Architecture
@@ -42,15 +43,21 @@ The landing page is server-rendered by **TanStack Start** on **Cloudflare
 Workers**, with **D1** for storage and **Better Auth** for sessions. The backend
 is a port of `hacknu-2026`'s.
 
-| Route                | Who can reach it                                           |
-| -------------------- | ---------------------------------------------------------- |
-| `/`                  | everyone — the landing page                                |
-| `/login`             | signed out (signed-in visitors are bounced onward)         |
-| `/onboarding`        | signed in; also doubles as "edit my details"               |
-| `/dashboard`         | signed in **and** onboarded                                |
-| `/invite/$slug`      | signed in and onboarded; sends others through login first  |
-| `/admin`, `/checkin` | emails listed in `ADMIN_EMAILS` — everyone else gets a 404 |
-| `/api/auth/*`        | Better Auth's handler                                      |
+| Route                | Who can reach it                                                 |
+| -------------------- | ---------------------------------------------------------------- |
+| `/`                  | everyone — the landing page                                      |
+| `/login`             | signed out (signed-in visitors are bounced onward)               |
+| `/onboarding`        | signed in; also doubles as "edit my details"                     |
+| `/dashboard`         | signed in **and** onboarded                                      |
+| `/invite/$slug`      | signed in and onboarded; sends others through login first        |
+| `/admin`, `/checkin` | emails listed in `ADMIN_EMAILS` — everyone else gets a 404       |
+| `/terms`, `/privacy` | everyone                                                         |
+| `/api/auth/*`        | Better Auth's handler                                            |
+| `/api/report`        | `POST` with `{ "secret": GAS_SECRET }`: JSON for the Sheets sync |
+
+An invite link opened while signed out survives the detour: `/login` and
+`/onboarding` carry `?redirect=/invite/<slug>` (Google sign-in included) and
+return there afterwards. Only invite paths are honoured; see `src/lib/redirect.ts`.
 
 Guards live in `beforeLoad` on the `_protected` and `_admin` layout routes, and
 every server function re-checks the session itself — the layout protects
@@ -64,13 +71,35 @@ every team mutation are refused **on the server**, so the client cannot bypass i
 Local development needs none of these — OTP codes are printed to the server
 console, exactly as `hacknu-2026` does when its mail webhook is unset.
 
-| Secret                                      | Needed for                                 |
-| ------------------------------------------- | ------------------------------------------ |
-| `BETTER_AUTH_SECRET`                        | signing sessions (any long random string)  |
-| `database_id` in `wrangler.jsonc`           | deploying; run `wrangler d1 create whd-db` |
-| `GAS_URL` / `GAS_SECRET`                    | delivering OTP emails in production        |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | optional "Sign in with Google"             |
-| `ADMIN_EMAILS`                              | who can open `/admin` and `/checkin`       |
+| Secret                                      | Needed for                                         |
+| ------------------------------------------- | -------------------------------------------------- |
+| `BETTER_AUTH_SECRET`                        | signing sessions (any long random string)          |
+| `database_id` in `wrangler.jsonc`           | deploying; run `wrangler d1 create whd-db`         |
+| `GAS_URL` / `GAS_SECRET`                    | OTP emails; `GAS_SECRET` also guards `/api/report` |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | optional "Sign in with Google"                     |
+| `ADMIN_EMAILS`                              | who can open `/admin` and `/checkin`               |
+
+Run `npm run db:migrate:local` again whenever `database_id` changes: the local
+database is keyed on it, so a new id starts from an empty database.
+
+The dashboard's "suggest a team name" button uses **Workers AI** through the `AI`
+binding in `wrangler.jsonc`. AI bindings always call Cloudflare, even in local
+dev, so they need `wrangler login` and are billed to the account (a few tokens per
+click; the button has a cooldown). Without it the button shows a friendly error
+and nothing else breaks.
+
+### Dashboard and admin
+
+- **Dashboard:** status, team and event cards; inline two-step confirm for remove,
+  leave and dissolve; success and error banners; open team slots; team changes
+  hidden once registration closes. The landing hero points each visitor at their
+  next step (register → finish profile → find a team → dashboard).
+- **`/admin`:** sortable columns, show/hide columns, eligible/not-eligible filters,
+  jump between a participant and their team, CSV export, cached for 5 minutes with
+  a throttled Refresh in the shared admin header.
+- **`/checkin`:** only eligible teams (at least `MIN_TEAM_SIZE` members); attendance
+  and team-status filters (ready / partial / no-show); ticking is optimistic and
+  un-ticking asks first.
 
 ### Teams
 

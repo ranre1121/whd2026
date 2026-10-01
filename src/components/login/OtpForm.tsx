@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useWebHaptics } from 'web-haptics/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field } from '@/components/ui/field';
 import { authClient } from '@/lib/auth-client';
 import { otpSchema } from '@/lib/validation';
+import { webHapticsOptions } from '@/lib/web-haptics';
 
 const RESEND_COOLDOWN_SECONDS = 30;
 
@@ -22,6 +24,7 @@ export function OtpForm({
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
+  const { trigger } = useWebHaptics(webHapticsOptions);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -35,6 +38,7 @@ export function OtpForm({
 
     const parsed = otpSchema.safeParse({ otp });
     if (!parsed.success) {
+      trigger('error');
       setError(t(parsed.error.issues[0].message));
       return;
     }
@@ -46,11 +50,14 @@ export function OtpForm({
         otp: parsed.data.otp,
       });
       if (verifyError) {
+        trigger('error');
         setError(t('login.verifyFailed'));
         return;
       }
+      trigger('success');
       onVerified();
     } catch {
+      trigger('error');
       setError(t('login.verifyFailed'));
     } finally {
       setPending(false);

@@ -1,0 +1,28 @@
+{
+  "short_name": "WHD",
+  "name": "Women’s Hack Day",
+  "description": "Women’s Hack Day — an annual three-round team competition in mathematics, competitive programming and product design, organized by the NU ACM-W Student Chapter.",
+  "icons": [
+    {
+      "src": "WHDlogo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#bb046c",
+  "background_color": "#000000"
+}

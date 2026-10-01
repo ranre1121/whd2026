@@ -63,6 +63,15 @@ export default function Footer({ session }: { session: Session }) {
         <p className="text-whd-text-dim text-base italic sm:text-lg md:text-xl">
           {t('footer.rights')}
         </p>
+
+        <div className="text-whd-text-muted mt-4 flex justify-center gap-6 text-sm">
+          <Link to="/privacy" className="hover:text-whd-pink-bright transition-colors">
+            {t('footer.privacy')}
+          </Link>
+          <Link to="/terms" className="hover:text-whd-pink-bright transition-colors">
+            {t('footer.terms')}
+          </Link>
+        </div>
       </div>
     </footer>
   );

@@ -1,7 +1,5 @@
 import { env } from 'cloudflare:workers';
-import { eq } from 'drizzle-orm';
 import { getDb } from '@/db';
-import { participant } from '@/db/schema';
 
 interface AppEnv {
   DB: D1Database;
@@ -22,6 +20,10 @@ export type ReportParticipant = {
   parentPhone: string | null;
   educationLevel: string;
   teamName: string | null;
+  /** Links the participant row to its team row in the admin table. */
+  teamSlug: string | null;
+  /** In a team that has reached MIN_TEAM_SIZE. */
+  teamEligible: boolean;
   attended: boolean;
   createdAt: string;
 };
@@ -33,7 +35,8 @@ export type ReportTeam = {
   memberCount: number;
   /** A team only competes once it reaches MIN_TEAM_SIZE. */
   eligible: boolean;
-  members: string[];
+  /** Captain first. */
+  members: { id: string; fullName: string }[];
   createdAt: string;
 };
 
@@ -55,12 +58,24 @@ export async function getReportData(): Promise<{
   const db = getAppDb();
   const { MIN_TEAM_SIZE } = await import('@/db/schema');
 
-  const participantRows = await db.query.participant.findMany({
-    with: {
-      user: { columns: { email: true } },
-      team: { columns: { name: true } },
-    },
-  });
+  const [participantRows, teamRows] = await Promise.all([
+    db.query.participant.findMany({
+      with: {
+        user: { columns: { email: true } },
+        team: { columns: { name: true, inviteSlug: true } },
+      },
+    }),
+    db.query.team.findMany({
+      with: {
+        captain: { columns: { fullName: true } },
+        members: { columns: { id: true, fullName: true } },
+      },
+    }),
+  ]);
+
+  const eligibleTeamIds = new Set(
+    teamRows.filter((t) => t.members.length >= MIN_TEAM_SIZE).map((t) => t.id),
+  );
 
   const participants: ReportParticipant[] = participantRows.map((p) => ({
     id: p.id,
@@ -73,16 +88,11 @@ export async function getReportData(): Promise<{
     parentPhone: p.parentPhone,
     educationLevel: p.educationLevel,
     teamName: p.team?.name ?? null,
+    teamSlug: p.team?.inviteSlug ?? null,
+    teamEligible: !!p.teamId && eligibleTeamIds.has(p.teamId),
     attended: p.attended,
     createdAt: toIso(p.createdAt),
   }));
-
-  const teamRows = await db.query.team.findMany({
-    with: {
-      captain: { columns: { fullName: true } },
-      members: { columns: { id: true, fullName: true } },
-    },
-  });
 
   const teams: ReportTeam[] = teamRows.map((t) => {
     // Captain first, then everyone else, so the roster reads predictably.
@@ -96,7 +106,7 @@ export async function getReportData(): Promise<{
       captainName: t.captain?.fullName ?? '',
       memberCount: t.members.length,
       eligible: t.members.length >= MIN_TEAM_SIZE,
-      members: ordered.map((m) => m.fullName),
+      members: ordered,
       createdAt: toIso(t.createdAt),
     };
   });
@@ -112,15 +122,6 @@ export async function getReportData(): Promise<{
       attended: participants.filter((p) => p.attended).length,
     },
   };
-}
-
-/** Mark a participant present or absent at the venue. */
-export async function setAttendance(userId: string, attended: boolean): Promise<void> {
-  const db = getAppDb();
-  await db
-    .update(participant)
-    .set({ attended, updatedAt: new Date() })
-    .where(eq(participant.id, userId));
 }
 
 /** Rows as CSV, for organisers who want the data in a spreadsheet. */

@@ -5,12 +5,15 @@ import { authClient } from '@/lib/auth-client';
 
 /**
  * Starts the Google OAuth redirect. Better Auth sends the user back to
- * /login, whose beforeLoad routes them to onboarding or the dashboard.
+ * /login, whose beforeLoad routes them to onboarding, the dashboard, or the
+ * invite link they started from.
  */
-export function GoogleButton() {
+export function GoogleButton({ redirect }: { redirect?: string }) {
   const { t } = useTranslation();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const loginUrl = redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : '/login';
 
   const signIn = async () => {
     setError(null);
@@ -18,8 +21,8 @@ export function GoogleButton() {
     try {
       const { error: signInError } = await authClient.signIn.social({
         provider: 'google',
-        callbackURL: '/login',
-        errorCallbackURL: '/login',
+        callbackURL: loginUrl,
+        errorCallbackURL: loginUrl,
       });
       if (signInError) {
         setError(t('login.googleFailed'));

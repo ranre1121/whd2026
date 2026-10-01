@@ -1,50 +1,67 @@
-import { useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useWebHaptics } from 'web-haptics/react';
 import { Button } from '@/components/ui/button';
+import { ConfirmButton } from '@/components/ui/confirm-button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { MAX_TEAM_SIZE, MIN_TEAM_SIZE } from '@/db/schema';
+import { MAX_TEAM_SIZE } from '@/db/schema';
 import type { TeamData } from '@/lib/team.server';
+import { webHapticsOptions } from '@/lib/web-haptics';
+
+const noopSubscribe = () => () => {};
+
+/**
+ * The site origin, read only in the browser. The server snapshot is '', and
+ * React swaps in the real value after hydration — computing it inline instead
+ * left the invite field blank, since hydration keeps the server-rendered value.
+ */
+function useOrigin() {
+  return useSyncExternalStore(
+    noopSubscribe,
+    () => window.location.origin,
+    () => '',
+  );
+}
+
+/** Which team action is in flight: a member id for a kick, or leave/dissolve. */
+export type PendingTeamAction = string | 'leave' | 'dissolve' | null;
 
 export function TeamCard({
   team,
   currentUserId,
+  registrationOpen,
+  pendingAction,
   onKick,
   onLeave,
   onDissolve,
 }: {
   team: TeamData;
   currentUserId: string;
-  onKick: (userId: string) => Promise<void>;
-  onLeave: () => Promise<void>;
-  onDissolve: () => Promise<void>;
+  registrationOpen: boolean;
+  pendingAction: PendingTeamAction;
+  onKick: (userId: string) => void;
+  onLeave: () => void;
+  onDissolve: () => void;
 }) {
   const { t } = useTranslation();
+  const { trigger } = useWebHaptics(webHapticsOptions);
   const [copied, setCopied] = useState(false);
-  const [pending, setPending] = useState(false);
 
   const isCaptain = team.captainId === currentUserId;
-  const isComplete = team.members.length >= MIN_TEAM_SIZE;
-  const inviteUrl =
-    typeof window !== 'undefined' ? `${window.location.origin}/invite/${team.inviteSlug}` : '';
+  const busy = pendingAction !== null;
+  const openSlots = Math.max(0, MAX_TEAM_SIZE - team.members.length);
+  const origin = useOrigin();
+  const inviteUrl = origin ? `${origin}/invite/${team.inviteSlug}` : '';
 
   const copyInvite = async () => {
     try {
       await navigator.clipboard.writeText(inviteUrl);
+      trigger('success');
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // Clipboard can be blocked; the input is selectable as a fallback.
-    }
-  };
-
-  const run = async (action: () => Promise<void>, confirmMessage?: string) => {
-    if (confirmMessage && !window.confirm(confirmMessage)) return;
-    setPending(true);
-    try {
-      await action();
-    } finally {
-      setPending(false);
     }
   };
 
@@ -58,13 +75,13 @@ export function TeamCard({
           </span>
         </div>
 
-        <p className={isComplete ? 'text-whd-pink-soft text-sm' : 'text-whd-text-muted text-sm'}>
-          {isComplete
-            ? t('dashboard.teamReady')
-            : t('dashboard.teamIncomplete', { min: MIN_TEAM_SIZE })}
-        </p>
+        {!registrationOpen && (
+          <p className="rounded-lg border border-amber-400/30 bg-amber-400/5 px-4 py-3 text-sm text-amber-200">
+            {t('dashboard.registrationLocked')}
+          </p>
+        )}
 
-        {/* Members */}
+        {/* Members, then the slots still open */}
         <ul className="flex flex-col gap-2">
           {team.members.map((member) => (
             <li
@@ -77,56 +94,67 @@ export function TeamCard({
                   {member.isCaptain ? t('dashboard.captain') : t('dashboard.member')}
                 </span>
               </span>
-              {isCaptain && !member.isCaptain && (
-                <Button
+              {registrationOpen && isCaptain && !member.isCaptain && (
+                <ConfirmButton
                   variant="ghost"
-                  size="sm"
-                  disabled={pending}
-                  onClick={() =>
-                    run(
-                      () => onKick(member.id),
-                      t('dashboard.confirmKick', { name: member.fullName }),
-                    )
-                  }
-                >
-                  {t('dashboard.kick')}
-                </Button>
+                  label={t('dashboard.kick')}
+                  confirmLabel={t('common.confirm')}
+                  loading={pendingAction === member.id}
+                  disabled={busy}
+                  onConfirm={() => onKick(member.id)}
+                />
               )}
+            </li>
+          ))}
+          {Array.from({ length: openSlots }, (_, i) => (
+            <li
+              key={`open-${i}`}
+              className="border-whd-border text-whd-text-dim rounded-lg border border-dashed px-4 py-3 text-sm"
+            >
+              {t('dashboard.emptySlot')}
             </li>
           ))}
         </ul>
 
-        {/* Invite link */}
-        <div className="flex flex-col gap-2">
-          <span className="text-sm font-medium text-white">{t('dashboard.inviteLink')}</span>
-          <div className="flex gap-2">
-            <Input readOnly value={inviteUrl} onFocus={(e) => e.currentTarget.select()} />
-            <Button variant="outline" onClick={copyInvite} className="shrink-0">
-              {copied ? t('common.copied') : t('common.copy')}
-            </Button>
-          </div>
-          <p className="text-whd-text-dim text-sm">{t('dashboard.inviteHint')}</p>
-        </div>
+        {registrationOpen && (
+          <>
+            {/* Invite link */}
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-white">{t('dashboard.inviteLink')}</span>
+              <div className="flex gap-2">
+                <Input readOnly value={inviteUrl} onFocus={(e) => e.currentTarget.select()} />
+                <Button variant="outline" onClick={copyInvite} className="shrink-0">
+                  {copied ? t('common.copied') : t('common.copy')}
+                </Button>
+              </div>
+              <p className="text-whd-text-dim text-sm">{t('dashboard.inviteHint')}</p>
+            </div>
 
-        <div>
-          {isCaptain ? (
-            <Button
-              variant="outline"
-              disabled={pending}
-              onClick={() => run(onDissolve, t('dashboard.confirmDissolve'))}
-            >
-              {t('dashboard.dissolve')}
-            </Button>
-          ) : (
-            <Button
-              variant="outline"
-              disabled={pending}
-              onClick={() => run(onLeave, t('dashboard.confirmLeave'))}
-            >
-              {t('dashboard.leave')}
-            </Button>
-          )}
-        </div>
+            <div>
+              {isCaptain ? (
+                <ConfirmButton
+                  size="md"
+                  label={t('dashboard.dissolve')}
+                  confirmLabel={t('common.confirm')}
+                  loading={pendingAction === 'dissolve'}
+                  loadingLabel={t('common.loading')}
+                  disabled={busy}
+                  onConfirm={onDissolve}
+                />
+              ) : (
+                <ConfirmButton
+                  size="md"
+                  label={t('dashboard.leave')}
+                  confirmLabel={t('common.confirm')}
+                  loading={pendingAction === 'leave'}
+                  loadingLabel={t('common.loading')}
+                  disabled={busy}
+                  onConfirm={onLeave}
+                />
+              )}
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );

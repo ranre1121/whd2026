@@ -65,7 +65,7 @@ function transliterate(s: string): string {
 
 /**
  * Turn a team name into a URL-safe ASCII slug.
- * "Команда Альфа" → "komanda-alfa"; "Cool Hackers!!" → "cool-hackers"
+ * "Команда Альфа" → "komanda-alyfa"; "Cool Hackers!!" → "cool-hackers"
  */
 export function slugify(name: string): string {
   return transliterate(name.trim().toLowerCase())

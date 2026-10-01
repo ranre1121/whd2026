@@ -3,13 +3,13 @@ import { motion } from 'motion/react';
 import { Link } from '@tanstack/react-router';
 import { buttonVariants } from '@/components/ui/button-variants';
 import { cn } from '@/lib/utils';
-import type { Session } from '@/lib/types';
+import { NEXT_STEP_ROUTE, type NextStep } from '@/lib/next-step';
+import { MIN_TEAM_SIZE } from '@/db/schema';
 import { HexagonBackground } from '@/components/landing/HexagonBackground';
 import Countdown from '@/components/landing/Countdown';
 
-export default function Hero({ session }: { session: Session }) {
+export default function Hero({ nextStep }: { nextStep: NextStep }) {
   const { t } = useTranslation();
-  const isLoggedIn = !!session?.user;
 
   return (
     <section
@@ -68,12 +68,19 @@ export default function Hero({ session }: { session: Session }) {
 
           <Countdown />
 
-          <Link
-            to={isLoggedIn ? '/dashboard' : '/login'}
-            className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'mt-2')}
-          >
-            {isLoggedIn ? t('hero.dashboard') : t('hero.register')}
-          </Link>
+          <div className="mt-2 flex flex-col items-center gap-3">
+            <Link
+              to={NEXT_STEP_ROUTE[nextStep]}
+              className={cn(buttonVariants({ variant: 'primary', size: 'lg' }))}
+            >
+              {t(`hero.cta.${nextStep}`)}
+            </Link>
+            {nextStep !== 'register' && (
+              <p className="text-whd-pink-soft text-sm md:text-base">
+                {t(`hero.status.${nextStep}`, { min: MIN_TEAM_SIZE })}
+              </p>
+            )}
+          </div>
         </motion.div>
       </div>
     </section>

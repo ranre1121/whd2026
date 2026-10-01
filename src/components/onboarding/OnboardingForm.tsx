@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useWebHaptics } from 'web-haptics/react';
 import { Button } from '@/components/ui/button';
 import { Input, Select } from '@/components/ui/input';
 import { Field } from '@/components/ui/field';
@@ -10,6 +11,7 @@ import {
   type EducationLevel,
   type OnboardingInput,
 } from '@/lib/validation';
+import { webHapticsOptions } from '@/lib/web-haptics';
 
 export type OnboardingDefaults = Partial<Record<keyof OnboardingInput, string>>;
 
@@ -35,6 +37,7 @@ export function OnboardingForm({
   });
   const [errors, setErrors] = useState<Errors>({});
   const [pending, setPending] = useState(false);
+  const { trigger } = useWebHaptics(webHapticsOptions);
 
   const set = (key: keyof typeof values) => (v: string) =>
     setValues((prev) => ({ ...prev, [key]: v }));
@@ -54,6 +57,7 @@ export function OnboardingForm({
         // Zod messages are i18n keys; resolve them for display.
         if (key && !next[key]) next[key] = t(issue.message);
       }
+      trigger('error');
       setErrors(next);
       return;
     }
@@ -61,8 +65,11 @@ export function OnboardingForm({
     setPending(true);
     try {
       await onSubmit(parsed.data);
+      trigger('success');
     } catch (err) {
-      setErrors({ form: err instanceof Error ? err.message : t('onboarding.saveFailed') });
+      trigger('error');
+      // Server errors may be i18n keys (e.g. registration closed); t() passes plain text through.
+      setErrors({ form: err instanceof Error ? t(err.message) : t('onboarding.saveFailed') });
     } finally {
       setPending(false);
     }
